@@ -38,6 +38,9 @@ public class Program
 
                 switch (resourcePath.ToLower())
                 {
+                    case "mynamebyheader":
+                        GetMyNameByHeader(response);
+                        break;
                     case "myname":
                         responseMessage = GetMyName();
                         response.StatusCode = 200; // OK
@@ -58,11 +61,7 @@ public class Program
                         HandleServerErrorResponse(response);
                         break;
                     default:
-                        // Default: Unknown resource, return 404
-                        response.StatusCode = 404;
-                        byte[] notFoundBuffer = Encoding.UTF8.GetBytes("Resource not found");
-                        response.ContentLength64 = notFoundBuffer.Length;
-                        response.OutputStream.Write(notFoundBuffer, 0, notFoundBuffer.Length);
+                        HandleNotFound(response);
                         break;
                 }
 
@@ -79,6 +78,19 @@ public class Program
             listener.Stop();
             Console.WriteLine("Quitting listener");
         }
+    }
+
+    /// <summary>
+    /// Gets my name by adding a custom header to the response.
+    /// </summary>
+    /// <param name="response"></param>
+    private static void GetMyNameByHeader(HttpListenerResponse response)
+    {
+        response.StatusCode = 200;
+        response.Headers.Add("X-MyName", "Santiago_HTTPTask"); // Add custom header
+        byte[] buffer = Encoding.UTF8.GetBytes("Header added with your name (check the X-MyName header).");
+        response.ContentLength64 = buffer.Length;
+        response.OutputStream.Write(buffer, 0, buffer.Length);
     }
 
     private static void HandleInformationRequest(HttpListenerResponse response)
@@ -103,6 +115,12 @@ public class Program
         EncodeStatusCode(response, 400, "This is a client error response");
     }
 
+    /// <summary>
+    /// Encodes the status code and message into the response.
+    /// </summary>
+    /// <param name="response"></param>
+    /// <param name="statusCode"></param>
+    /// <param name="message"></param>
     static void EncodeStatusCode(HttpListenerResponse response, int statusCode, string message)
     {
         response.StatusCode = statusCode;
@@ -119,6 +137,16 @@ public class Program
     static string GetResourcePath(HttpListenerRequest request)
     {
         return request.Url.AbsolutePath.Trim('/');
+    }
+
+    /// <summary>
+    /// Handles Resource Not Found.
+    /// </summary>
+    static void HandleNotFound(HttpListenerResponse response)
+    {
+        byte[] buffer = Encoding.UTF8.GetBytes("Resrouce not found");
+        response.ContentLength64 = buffer.Length;
+        response.OutputStream.Write(buffer, 0, buffer.Length);
     }
 
     /// <summary>

@@ -11,6 +11,7 @@ namespace ClientApp
         public const string BaseUrl = "http://localhost:8080";
         public List<string> Task2Requests => new List<string>
         {
+            $"{BaseUrl}/MyNameByHeader",
             $"{BaseUrl}/MyName",
             $"{BaseUrl}/Success",
             $"{BaseUrl}/Redirection",
