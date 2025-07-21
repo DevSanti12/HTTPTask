@@ -1,11 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.12.35514.174 d17.12
+VisualStudioVersion = 17.12.35514.174
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ListenerApp", "Listener\ListenerApp.csproj", "{EF521FA0-C33A-4DCB-969B-88D415C07666}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClientApp", "ClientApp\ClientApp.csproj", "{5EAEB2B2-6488-4234-90C8-0B54A6EDC2F3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Listener.Client.UnitTests", "Listener.Client.UnitTests\Listener.Client.UnitTests.csproj", "{781F329E-B86A-49D7-B9A4-99A30D7DE36F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,8 +23,15 @@ Global
 		{5EAEB2B2-6488-4234-90C8-0B54A6EDC2F3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5EAEB2B2-6488-4234-90C8-0B54A6EDC2F3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5EAEB2B2-6488-4234-90C8-0B54A6EDC2F3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{781F329E-B86A-49D7-B9A4-99A30D7DE36F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{781F329E-B86A-49D7-B9A4-99A30D7DE36F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{781F329E-B86A-49D7-B9A4-99A30D7DE36F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{781F329E-B86A-49D7-B9A4-99A30D7DE36F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E99596EC-9D01-405A-8610-ECD363825629}
 	EndGlobalSection
 EndGlobal

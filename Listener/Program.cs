@@ -1,161 +1,137 @@
-﻿using System;
-using System.Net;
-using System.Text;
-using System.Net.Http;
+﻿using ListenerApp.Interfaces;
 
-namespace ListenerApp;
-public class Program
+namespace ListenerApp
 {
-    static void Main(string[] args)
+    public class Program
     {
-        //define the servers HTTP endpoint
-        string urlPrefix = "http://localhost:8080/";
-
-        //Create the listener
-        HttpListener listener = new HttpListener();
-        listener.Prefixes.Add(urlPrefix);
-
-        try
+        public static void Main(string[] args)
         {
-            listener.Start();
-            Console.WriteLine("HTTP Listener is ready and listening on " + urlPrefix);
-            Console.WriteLine("press Ctrl+C to stop the server");
+            IHttpServer httpServer = new HttpServer("http://localhost:8080/");
+            httpServer.Start();
 
-            while (true) 
-            {
-                //wait for request from client
-                HttpListenerContext context = listener.GetContext();
-                HttpListenerRequest request = context.Request;
+            Console.WriteLine("HTTP Listener is ready. Press Ctrl+C to stop the server.");
+            Console.ReadLine();
 
-                //using GetResourcePath to parse the request
-                string resourcePath = GetResourcePath(request);
-
-                Console.WriteLine($"Received request for resource: {resourcePath}");
-
-                //process the request, send appropiate response
-                HttpListenerResponse response = context.Response;
-                string responseMessage;
-
-                switch (resourcePath.ToLower())
-                {
-                    case "mynamebyheader":
-                        GetMyNameByHeader(response);
-                        break;
-                    case "myname":
-                        responseMessage = GetMyName();
-                        response.StatusCode = 200; // OK
-                        break;
-                    case "information":
-                        HandleInformationRequest(response);
-                        break;
-                    case "success":
-                        HandleSucessResponse(response);
-                        break;
-                    case "redirection":
-                        HandleRedirectionResponse(response);
-                        break;
-                    case "clienterror":
-                        HandleClientErrorResponse(response);
-                        break;
-                    case "servererror":
-                        HandleServerErrorResponse(response);
-                        break;
-                    default:
-                        HandleNotFound(response);
-                        break;
-                }
-
-                response.OutputStream.Close();
-            }
-
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine(ex.ToString());
-        }
-        finally 
-        {
-            listener.Stop();
+            httpServer.Stop();
             Console.WriteLine("Quitting listener");
         }
     }
+    //public class Program
+    //{
+    //    public static void Main(string[] args)
+    //    {
+    //        string urlPrefix = "http://localhost:8080/";
+    //        HttpListener listener = new HttpListener();
+    //        listener.Prefixes.Add(urlPrefix);
 
-    /// <summary>
-    /// Gets my name by adding a custom header to the response.
-    /// </summary>
-    /// <param name="response"></param>
-    private static void GetMyNameByHeader(HttpListenerResponse response)
-    {
-        response.StatusCode = 200;
-        response.Headers.Add("X-MyName", "Santiago_HTTPTask"); // Add custom header
-        byte[] buffer = Encoding.UTF8.GetBytes("Header added with your name (check the X-MyName header).");
-        response.ContentLength64 = buffer.Length;
-        response.OutputStream.Write(buffer, 0, buffer.Length);
-    }
+    //        try
+    //        {
+    //            listener.Start();
+    //            Console.WriteLine("HTTP Listener is ready and listening on " + urlPrefix);
+    //            Console.WriteLine("Press Ctrl+C to stop the server.");
 
-    private static void HandleInformationRequest(HttpListenerResponse response)
-    {
-        EncodeStatusCode(response, 100, "This is an informational repsonse");
-    }
+    //            while (true)
+    //            {
+    //                HttpListenerContext context = listener.GetContext();
+    //                ProcessRequest(context.Request, context.Response);
+    //            }
+    //        }
+    //        catch (Exception ex)
+    //        {
+    //            Console.WriteLine(ex.ToString());
+    //        }
+    //        finally
+    //        {
+    //            listener.Stop();
+    //            Console.WriteLine("Quitting listener");
+    //        }
+    //    }
 
-    private static void HandleSucessResponse(HttpListenerResponse response)
-    {
-        EncodeStatusCode(response, 200, "This is a successful response");
-    }
-    private static void HandleRedirectionResponse(HttpListenerResponse response)
-    {
-        EncodeStatusCode(response, 300, "This is a redirection response");
-    }
-    private static void HandleServerErrorResponse(HttpListenerResponse response)
-    {
-        EncodeStatusCode(response, 500, "This is a server error response");
-    }
-    private static void HandleClientErrorResponse(HttpListenerResponse response)
-    {
-        EncodeStatusCode(response, 400, "This is a client error response");
-    }
+    //    public static void ProcessRequest(HttpListenerRequest request, HttpListenerResponse response)
+    //    {
+    //        string resourcePath = GetResourcePath(request);
+    //        Console.WriteLine($"Received request for resource: {resourcePath}");
 
-    /// <summary>
-    /// Encodes the status code and message into the response.
-    /// </summary>
-    /// <param name="response"></param>
-    /// <param name="statusCode"></param>
-    /// <param name="message"></param>
-    static void EncodeStatusCode(HttpListenerResponse response, int statusCode, string message)
-    {
-        response.StatusCode = statusCode;
-        byte[] buffer = Encoding.UTF8.GetBytes(message);
-        response.ContentLength64 = buffer.Length;
-        response.OutputStream.Write(buffer, 0, buffer.Length);
-    }
+    //        switch (resourcePath.ToLower())
+    //        {
+    //            case "mynamebyheader":
+    //                GetMyNameByHeader(response);
+    //                break;
+    //            case "mynamebycookies":
+    //                MyNameByCookies(response);
+    //                break;
+    //            case "myname":
+    //                EncodeStatusCode(response, 200, GetMyName());
+    //                break;
+    //            case "information":
+    //                HandleInformationRequest(response);
+    //                break;
+    //            case "success":
+    //                HandleSucessResponse(response);
+    //                break;
+    //            case "redirection":
+    //                HandleRedirectionResponse(response);
+    //                break;
+    //            case "clienterror":
+    //                HandleClientErrorResponse(response);
+    //                break;
+    //            case "servererror":
+    //                HandleServerErrorResponse(response);
+    //                break;
+    //            default:
+    //                HandleNotFound(response);
+    //                break;
+    //        }
+    //    }
 
-    /// <summary>
-    /// Parses the request URL and extracts the resource path.
-    /// </summary>
-    /// <param name="request">The HttpListenerRequest object.</param>
-    /// <returns>The extracted resource path (e.g., "MyName").</returns>
-    static string GetResourcePath(HttpListenerRequest request)
-    {
-        return request.Url.AbsolutePath.Trim('/');
-    }
+    //    public static void MyNameByCookies(HttpListenerResponse response)
+    //    {
+    //        response.StatusCode = 200;
+    //        Cookie cookie = new Cookie("MyName", "Santiago")
+    //        {
+    //            Expires = DateTime.Now.AddMinutes(3),
+    //            HttpOnly = true
+    //        };
+    //        response.Headers.Add(HttpResponseHeader.SetCookie, cookie.ToString());
+    //        EncodeStatusCode(response, 200, "Cookie added with your name (check the MyName cookie).");
+    //    }
 
-    /// <summary>
-    /// Handles Resource Not Found.
-    /// </summary>
-    static void HandleNotFound(HttpListenerResponse response)
-    {
-        byte[] buffer = Encoding.UTF8.GetBytes("Resrouce not found");
-        response.ContentLength64 = buffer.Length;
-        response.OutputStream.Write(buffer, 0, buffer.Length);
-    }
+    //    public static void GetMyNameByHeader(HttpListenerResponse response)
+    //    {
+    //        response.StatusCode = 200;
+    //        response.Headers.Add("X-MyName", "Santiago_HTTPTask");
+    //        EncodeStatusCode(response, 200, "Header added with your name (check the X-MyName header).");
+    //    }
 
-    /// <summary>
-    /// Returns my name
-    /// </summary>
-    /// <returns>Santiago</returns>
-    static string GetMyName()
-    {
-        return "Santiago";
-    }
+    //    public static void HandleInformationRequest(HttpListenerResponse response) =>
+    //        EncodeStatusCode(response, 100, "This is an informational response");
+
+    //    public static void HandleSucessResponse(HttpListenerResponse response) =>
+    //        EncodeStatusCode(response, 200, "This is a successful response");
+
+    //    public static void HandleRedirectionResponse(HttpListenerResponse response) =>
+    //        EncodeStatusCode(response, 300, "This is a redirection response");
+
+    //    public static void HandleClientErrorResponse(HttpListenerResponse response) =>
+    //        EncodeStatusCode(response, 400, "This is a client error response");
+
+    //    public static void HandleServerErrorResponse(HttpListenerResponse response) =>
+    //        EncodeStatusCode(response, 500, "This is a server error response");
+
+    //    public static void EncodeStatusCode(HttpListenerResponse response, int statusCode, string message)
+    //    {
+    //        response.StatusCode = statusCode;
+    //        byte[] buffer = Encoding.UTF8.GetBytes(message);
+    //        response.ContentLength64 = buffer.Length;
+    //        response.OutputStream.Write(buffer, 0, buffer.Length);
+    //    }
+
+    //    public static string GetResourcePath(HttpListenerRequest request) =>
+    //        request.Url.AbsolutePath.Trim('/');
+
+    //    public static void HandleNotFound(HttpListenerResponse response) =>
+    //        EncodeStatusCode(response, 404, "Resource not found");
+
+    //    public static string GetMyName() => "Santiago";
+    //}
 }
-

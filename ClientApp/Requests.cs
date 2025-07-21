@@ -12,6 +12,7 @@ namespace ClientApp
         public List<string> Task2Requests => new List<string>
         {
             $"{BaseUrl}/MyNameByHeader",
+            $"{BaseUrl}/MyNameByCookies",
             $"{BaseUrl}/MyName",
             $"{BaseUrl}/Success",
             $"{BaseUrl}/Redirection",
